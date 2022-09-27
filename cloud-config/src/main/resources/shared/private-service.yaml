@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: private-service
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD}
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+logging:
+  file:
+    path: ./private_service/
+    name: app.log
+
+server:
+  port: 8082

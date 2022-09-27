@@ -1,0 +1,15 @@
+spring:
+  data:
+    mongodb:
+      uri: ${DB_URL}
+  config:
+    import: optional:file:.env[.properties]
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+logging:
+  file:
+    path: .
+    name: app.log
+server:
+  port: 8081
