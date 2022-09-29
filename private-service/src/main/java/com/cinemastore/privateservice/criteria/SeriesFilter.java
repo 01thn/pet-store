@@ -17,6 +17,8 @@ public class SeriesFilter {
 
     private String title;
 
+    private String imageId;
+
     private LocalDate yearStarted;
 
     private LocalDate yearFinished;

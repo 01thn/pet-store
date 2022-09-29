@@ -36,8 +36,8 @@ public class BookController {
     }
 
     @GetMapping(BookEndpoints.GET_BY_ID)
-    public ResponseEntity<BookResponseDto> getById(@PathVariable Long id) throws NoSuchContentException {
-        return new ResponseEntity<>(bookService.findById(id), HttpStatus.OK);
+    public ResponseEntity<BookResponseDto> getById(@PathVariable Long id, @RequestParam String imageId) throws NoSuchContentException {
+        return new ResponseEntity<>(bookService.findById(id, imageId), HttpStatus.OK);
     }
 
     @DeleteMapping(BookEndpoints.DELETE_BY_ID)

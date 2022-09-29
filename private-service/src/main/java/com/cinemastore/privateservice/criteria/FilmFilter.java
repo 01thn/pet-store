@@ -17,6 +17,8 @@ public class FilmFilter {
 
     private String title;
 
+    private String imageId;
+
     private Integer duration;
 
     private LocalDate releaseDate;

@@ -10,8 +10,7 @@ import java.util.List;
 
 public interface BookService extends BaseService<Long, Book, BookRequestDto, BookResponseDto> {
 
-    @Override
-    BookResponseDto save(BookRequestDto entity) throws NoSuchContentException;
+    BookResponseDto findById(Long id, String imageId) throws NoSuchContentException;
 
     List<BookResponseDto> findBy(BookFilter bookFilter, Integer page, Integer size);
 }

@@ -20,6 +20,8 @@ public class BookResponseDto {
 
     private String title;
 
+    private byte[] image;
+
     private Integer pagesAmount;
 
     private LocalDate releaseDate;

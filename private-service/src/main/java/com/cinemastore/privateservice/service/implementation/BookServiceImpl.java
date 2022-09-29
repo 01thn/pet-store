@@ -1,9 +1,11 @@
 package com.cinemastore.privateservice.service.implementation;
 
+import com.cinemastore.privateservice.client.MediaServiceClient;
 import com.cinemastore.privateservice.criteria.BookFilter;
 import com.cinemastore.privateservice.criteria.BookSpecificationBuilder;
 import com.cinemastore.privateservice.dto.BookRequestDto;
 import com.cinemastore.privateservice.dto.BookResponseDto;
+import com.cinemastore.privateservice.dto.FilmResponseDto;
 import com.cinemastore.privateservice.dto.GenreRequestDto;
 import com.cinemastore.privateservice.dto.PersonRequestDto;
 import com.cinemastore.privateservice.dto.PublisherRequestDto;
@@ -54,6 +56,8 @@ public class BookServiceImpl implements BookService {
 
     private final BookSpecificationBuilder bookSpecificationBuilder;
 
+    private final MediaServiceClient client;
+
     private final Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);
 
     public BookServiceImpl(BookRepository bookRepository,
@@ -64,7 +68,8 @@ public class BookServiceImpl implements BookService {
                            GenreService genreService,
                            PublisherService publisherService,
                            PersonServiceImpl personService,
-                           BookSpecificationBuilder bookSpecificationBuilder) {
+                           BookSpecificationBuilder bookSpecificationBuilder,
+                           MediaServiceClient client) {
         this.bookRepository = bookRepository;
         this.bookMapper = bookMapper;
         this.genreMapper = genreMapper;
@@ -74,6 +79,7 @@ public class BookServiceImpl implements BookService {
         this.publisherService = publisherService;
         this.personService = personService;
         this.bookSpecificationBuilder = bookSpecificationBuilder;
+        this.client = client;
     }
 
     @Override
@@ -128,6 +134,21 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public BookResponseDto findById(Long id, String imageId) throws NoSuchContentException {
+        return bookRepository.findById(id)
+                .map(it -> {
+                    BookResponseDto entity = bookMapper.entityToResponseDto(it);
+                    entity.setImage(client.findById(imageId));
+                    return entity;
+                })
+                .orElseThrow(() -> {
+                    logger.warn("Book with id {} not found", id);
+                    return new NoSuchContentException();
+                });
+    }
+
+    @Override
     public void deleteById(Long id) throws NoSuchContentException {
         Optional.ofNullable(findById(id))
                 .ifPresent(it -> bookRepository.deleteById(it.getId()));
@@ -136,7 +157,12 @@ public class BookServiceImpl implements BookService {
     public List<BookResponseDto> findBy(BookFilter bookFilter, Integer page, Integer size) {
         return bookRepository.findAll(bookSpecificationBuilder.getSpecification(bookFilter), PageRequest.of(page, size))
                 .stream()
-                .map(bookMapper::entityToResponseDto)
+                .map(it -> {
+                    BookResponseDto entity = bookMapper.entityToResponseDto(it);
+                    if (bookFilter.getImageId() != null) {
+                        entity.setImage(client.findById(bookFilter.getImageId()));
+                    }
+                    return entity;})
                 .collect(Collectors.toList());
     }
 

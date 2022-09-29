@@ -17,5 +17,7 @@ import java.util.List;
 
 public interface SeriesService extends BaseService<Long, Series, SeriesRequestDto, SeriesResponseDto> {
 
+    SeriesResponseDto findById(Long id, String imageId) throws NoSuchContentException;
+
     List<SeriesResponseDto> findBy(SeriesFilter seriesFilter, Integer page, Integer size);
 }

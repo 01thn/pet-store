@@ -19,6 +19,8 @@ public class FilmResponseDto {
 
     private Long id;
 
+    private byte[] image;
+
     private String title;
 
     private Integer duration;
