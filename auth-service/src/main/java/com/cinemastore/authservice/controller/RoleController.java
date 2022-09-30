@@ -1,16 +1,12 @@
 package com.cinemastore.authservice.controller;
 
+import com.cinemastore.authservice.controller.helpers.RoleEndpoints;
 import com.cinemastore.authservice.dto.RoleRequestDto;
 import com.cinemastore.authservice.dto.RoleResponseDto;
-import com.cinemastore.authservice.dto.UserRequestDto;
-import com.cinemastore.authservice.dto.UserResponseDto;
 import com.cinemastore.authservice.exception.NoSuchRoleException;
-import com.cinemastore.authservice.exception.UserAlreadyExistsException;
-import com.cinemastore.authservice.service.RoleService;
-import com.cinemastore.authservice.service.UserService;
+import com.cinemastore.authservice.service.implementation.RoleServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,33 +18,33 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/auth/role")
+@RequestMapping(RoleEndpoints.ROLE)
 public class RoleController {
 
-    private final RoleService roleService;
+    private final RoleServiceImpl roleServiceImpl;
 
-    public RoleController(RoleService roleService) {
-        this.roleService = roleService;
+    public RoleController(RoleServiceImpl roleServiceImpl) {
+        this.roleServiceImpl = roleServiceImpl;
     }
 
-    @PostMapping("/add")
+    @PostMapping(RoleEndpoints.ADD)
     public ResponseEntity<RoleResponseDto> create(@Valid @RequestBody RoleRequestDto roleRequestDto) {
-        return new ResponseEntity<>(roleService.save(roleRequestDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(roleServiceImpl.save(roleRequestDto), HttpStatus.CREATED);
     }
 
-    @GetMapping("/get/{id}")
+    @GetMapping(RoleEndpoints.GET_BY_ID)
     public ResponseEntity<RoleResponseDto> getById(@PathVariable Integer id) throws NoSuchRoleException {
-        return new ResponseEntity<>(roleService.findById(id), HttpStatus.OK);
+        return new ResponseEntity<>(roleServiceImpl.findById(id), HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping(RoleEndpoints.DELETE_BY_ID)
     public ResponseEntity<HttpStatus> deleteById(@PathVariable Integer id) throws NoSuchRoleException {
-        roleService.deleteById(id);
+        roleServiceImpl.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/update/{id}")
+    @PostMapping(RoleEndpoints.UPDATE_BY_ID)
     public ResponseEntity<RoleResponseDto> updateById(@PathVariable Integer id, @Valid @RequestBody RoleRequestDto roleRequestDto) throws NoSuchRoleException {
-        return new ResponseEntity<>(roleService.updateById(id, roleRequestDto), HttpStatus.OK);
+        return new ResponseEntity<>(roleServiceImpl.updateById(id, roleRequestDto), HttpStatus.OK);
     }
 }

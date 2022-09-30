@@ -1,5 +1,6 @@
 package com.cinemastore.authservice.aop;
 
+import com.cinemastore.authservice.exception.JwtAuthenticationException;
 import com.cinemastore.authservice.exception.NoSuchRoleException;
 import com.cinemastore.authservice.exception.NoSuchUserException;
 import com.cinemastore.authservice.exception.UserAlreadyExistsException;
@@ -11,8 +12,18 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ExceptionCatcherController {
 
-    @ExceptionHandler({NoSuchUserException.class, NoSuchRoleException.class, UserAlreadyExistsException.class})
-    public final ResponseEntity<String> noSuchMediaCatcher(Exception e) {
+    @ExceptionHandler({NoSuchUserException.class, NoSuchRoleException.class})
+    public final ResponseEntity<String> noSuchCatcher(Exception e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public final ResponseEntity<String> userExistsCatcher(Exception e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(JwtAuthenticationException.class)
+    public final ResponseEntity<String> jwtExceptionCatcher(Exception e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 }

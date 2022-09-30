@@ -24,7 +24,7 @@ import java.util.Base64;
 import java.util.Date;
 
 @Component
-public class JWTTokenProvider {
+public class JwtTokenProvider {
     @Value("${jwt.token.secret}")
     private String jwtSecret;
 
@@ -35,7 +35,7 @@ public class JWTTokenProvider {
 
     private final RoleMapper roleMapper;
 
-    public JWTTokenProvider(UserSecurityDetailsService detailsService, RoleMapper roleMapper) {
+    public JwtTokenProvider(UserSecurityDetailsService detailsService, RoleMapper roleMapper) {
         this.detailsService = detailsService;
         this.roleMapper = roleMapper;
     }

@@ -1,5 +1,8 @@
 package com.cinemastore.authservice.security;
 
+import com.cinemastore.authservice.controller.helpers.AuthEndpoints;
+import com.cinemastore.authservice.jwt.JwtConfig;
+import com.cinemastore.authservice.jwt.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -13,12 +16,24 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfiguration {
 
+    private final JwtTokenProvider jwtTokenProvider;
+
+    public SecurityConfiguration(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
     private final String[] PUBLIC_ENDPOINTS = {
-            "/sign-up",
-            "/sign-in",
-            "/swagger-ui/index.html",
+            AuthEndpoints.AUTH + AuthEndpoints.SIGN_IN,
+            AuthEndpoints.AUTH + AuthEndpoints.SIGN_UP,
+            "/v2/api-docs",
+            "/swagger-resources",
             "/swagger-resources/**",
-            "swagger-ui/#"
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
     };
 
 
@@ -29,11 +44,12 @@ public class SecurityConfiguration {
                 .disable()
                 .authorizeHttpRequests()
                 .antMatchers(PUBLIC_ENDPOINTS).permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//                .and()
-//                .apply(new JWTConfig(jwtTokenProvider));
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .apply(new JwtConfig(jwtTokenProvider));
 
         return http.build();
     }
