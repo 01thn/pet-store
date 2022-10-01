@@ -63,5 +63,10 @@ spring:
           predicates:
             - Path=/studio/**
 
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/auth/**
+
   application:
     name: api-gateway

@@ -21,7 +21,7 @@ import java.util.UUID;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+//    private final PasswordEncoder passwordEncoder;
 
     private final UserMapper userMapper;
 
@@ -33,12 +33,12 @@ public class UserServiceImpl implements UserService {
 
     public UserServiceImpl(UserRepository userRepository,
                            RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder,
+//                           PasswordEncoder passwordEncoder,
                            UserMapper userMapper,
                            RoleMapper roleMapper,
                            RoleServiceImpl roleServiceImpl) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+//        this.passwordEncoder = passwordEncoder;
         this.userMapper = userMapper;
         this.roleMapper = roleMapper;
         this.roleServiceImpl = roleServiceImpl;
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
 
     public UserResponseDto save(UserRequestDto userRequestDto) throws NoSuchRoleException {
         User user = userMapper.requestDtoToEntity(userRequestDto);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
         try {
             user.setRole(roleMapper.responseDtoToEntity
                     (roleServiceImpl.findById

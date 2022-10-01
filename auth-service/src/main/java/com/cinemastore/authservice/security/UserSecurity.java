@@ -1,21 +1,12 @@
 package com.cinemastore.authservice.security;
 
-import com.cinemastore.authservice.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
@@ -40,7 +31,7 @@ public class UserSecurity implements UserDetails {
 
     private String phone;
 
-    private Collection<? extends GrantedAuthority> authorities=new ArrayList<>();
+    private Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
 
     private Boolean isEnabled;
 

@@ -14,6 +14,18 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 233392524409-vj5n2a0aqu7oat3peu0pe9blf9r5ef64.apps.googleusercontent.com
+            client-secret: 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
+            scope: openid,profile,email
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.google.com
+          jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
 logging:
   file:
     path: ./auth_service/
@@ -26,8 +38,3 @@ flyway:
   url: ${DB_URL}
   user: ${DB_USER:postgres}
   password: ${DB_PASSWORD}
-
-jwt:
-  token:
-    secret: cinemastore
-    expired: 3600000

@@ -1,6 +1,5 @@
 package com.cinemastore.authservice.aop;
 
-import com.cinemastore.authservice.exception.JwtAuthenticationException;
 import com.cinemastore.authservice.exception.NoSuchRoleException;
 import com.cinemastore.authservice.exception.NoSuchUserException;
 import com.cinemastore.authservice.exception.UserAlreadyExistsException;
@@ -20,10 +19,5 @@ public class ExceptionCatcherController {
     @ExceptionHandler(UserAlreadyExistsException.class)
     public final ResponseEntity<String> userExistsCatcher(Exception e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(JwtAuthenticationException.class)
-    public final ResponseEntity<String> jwtExceptionCatcher(Exception e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 }
