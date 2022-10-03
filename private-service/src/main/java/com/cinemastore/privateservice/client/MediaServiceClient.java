@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(name = "media-service", url = "http://localhost:4000")
+@FeignClient(name = "media-service", url = "http://localhost:4000", fallback = MediaServiceClientFallback.class)
 public interface MediaServiceClient {
 
     @RequestMapping(method = RequestMethod.GET, value = "/media/get/{id}", consumes = MediaType.IMAGE_PNG_VALUE)
