@@ -5,7 +5,6 @@ import com.cinemastore.mediaservice.dto.RequestMediaDto;
 import com.cinemastore.mediaservice.dto.ResponseMediaDTO;
 import com.cinemastore.mediaservice.exception.ImageConvertingException;
 import com.cinemastore.mediaservice.exception.NoSuchMediaException;
-import com.cinemastore.mediaservice.mapper.MediaMapper;
 import com.cinemastore.mediaservice.service.MediaService;
 import com.cinemastore.mediaservice.service.MongoMediaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +23,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping(Endpoints.MEDIA)
 public class MediaController {
+
     private final MediaService mongoMediaService;
 
     @Autowired
@@ -70,6 +69,6 @@ public class MediaController {
     public ResponseEntity<ResponseMediaDTO> updateMedia(@PathVariable String id,
                                                         @RequestParam String title,
                                                         @RequestBody(required = false) MultipartFile image) throws ImageConvertingException, NoSuchMediaException {
-       return new ResponseEntity<>(mongoMediaService.updateById(id, new RequestMediaDto(title, image)), HttpStatus.OK);
+        return new ResponseEntity<>(mongoMediaService.updateById(id, new RequestMediaDto(title, image)), HttpStatus.OK);
     }
 }

@@ -14,6 +14,16 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  kafka:
+    bootstrap-servers: 127.0.0.1:29092
+    consumer:
+#      properties:
+#        spring:
+#          json:
+#            trusted:
+#              packages: *
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
 logging:
   file:
     path: ./private_service/
@@ -25,9 +35,3 @@ server:
 feign:
   hystrix:
     enabled: true
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: hystrix.stream

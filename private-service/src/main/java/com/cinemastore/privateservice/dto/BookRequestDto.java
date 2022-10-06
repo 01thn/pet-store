@@ -1,8 +1,5 @@
 package com.cinemastore.privateservice.dto;
 
-import com.cinemastore.privateservice.entity.Genre;
-import com.cinemastore.privateservice.entity.Person;
-import com.cinemastore.privateservice.entity.Publisher;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
