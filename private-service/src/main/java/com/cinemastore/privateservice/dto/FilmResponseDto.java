@@ -25,7 +25,7 @@ public class FilmResponseDto {
 
     private Integer duration;
 
-    private LocalDate releaseDate;
+    private Integer releaseDate;
 
     private Integer ageLimit;
 

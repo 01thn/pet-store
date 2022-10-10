@@ -51,9 +51,9 @@ create table if not exists person_country(
 
 create table if not exists film(
     id bigserial primary key not null,
-    title varchar(20) not null,
+    title varchar(100) not null,
     duration int not null,
-    release_date date not null,
+    release_date int not null,
     age_limit int,
     rank numeric(1,1),
     created_at timestamp not null,
