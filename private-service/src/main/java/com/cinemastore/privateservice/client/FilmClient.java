@@ -23,7 +23,7 @@ public interface FilmClient {
     List<FilmInfo> getTitles();
 
     @RequestMapping(method = RequestMethod.GET, value = "title/get-details",
-            headers = {"X-RapidAPI-Key=a0ae981adamsh978ee4c4eb1d8e2p136bcfjsn2e7e0d2ff95d", "X-RapidAPI-Host=imdb8.p.rapidapi.com"},
+            headers = {header1, header2},
             consumes = MediaType.APPLICATION_JSON_VALUE)
     FilmRequestDto getFilm(@RequestParam String tconst);
 }

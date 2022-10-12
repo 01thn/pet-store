@@ -1,23 +1,168 @@
-version: '2'
+version: '3'
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    restart: always
+    networks:
+      - project-network
     ports:
       - "22181:2181"
 
-  kafka:
+  kafka-broker:
     image: confluentinc/cp-kafka:latest
+    restart: always
     depends_on:
       - zookeeper
     ports:
       - "29092:29092"
+    networks:
+      - project-network
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker:9092,PLAINTEXT_HOST://kafka-broker:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  db-private:
+    image: postgres:14.1
+    container_name: db-private
+    restart: always
+    ports:
+      - "5432:5432"
+    networks:
+      - project-network
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=db_private
+
+  db-auth:
+    image: postgres:14.1
+    container_name: db-auth
+    restart: always
+    ports:
+      - "5433:5432"
+    networks:
+      - project-network
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=db_auth
+
+  db-media:
+    image: mongo:5.0
+    container_name: db-media
+    restart: always
+    networks:
+      - project-network
+    ports:
+      - '27017:27017'
+
+  cloud-config:
+    image: cloudconfig:0.0.1
+    container_name: cloud-config
+    build: ./cloud-config
+    restart: always
+    networks:
+      - project-network
+    ports:
+      - "8888:8888"
+
+  eureka-server:
+    image: eurekaserver:0.0.1
+    container_name: eureka-server
+    build: ./eureka-server
+    restart: always
+    networks:
+      - project-network
+    ports:
+      - "8761:8761"
+    depends_on:
+      - cloud-config
+    environment:
+      - CLOUD_URI=http://cloud-config:8888
+
+  private-service:
+    image: privateservice:0.0.1
+    build: ./private-service
+    container_name: private-service
+    restart: always
+    networks:
+      - project-network
+    ports:
+      - "8082:8082"
+    depends_on:
+      - cloud-config
+      - kafka-broker
+      - db-private
+      - eureka-server
+    environment:
+      - DB_URL=jdbc:postgresql://db-private:5432/db_private
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - KAFKA_SERVERS=kafka-broker:29092
+      - CLOUD_URI=http://cloud-config:8888
+      - EUREKA-URL=http://eureka-server:8761/eureka
+
+  media-service:
+    image: mediaservice:0.0.1
+    container_name: media-service
+    build: ./media-service
+    restart: always
+    networks:
+      - project-network
+    ports:
+      - "8081:8081"
+    depends_on:
+      - cloud-config
+      - db-media
+      - kafka-broker
+      - eureka-server
+    environment:
+      - DB_URL=mongodb://db-media:27017/db_media
+      - KAFKA_SERVERS=kafka-broker:29092
+      - CLOUD_URI=http://cloud-config:8888
+      - EUREKA-URL=http://eureka-server:8761/eureka
+
+  api-gateway:
+    image: apigateway:0.0.1
+    container_name: api-gateway
+    build: ./api-gateway
+    restart: always
+    networks:
+      - project-network
+    ports:
+      - "4000:4000"
+    depends_on:
+      - cloud-config
+      - eureka-server
+    environment:
+      - CLOUD_URI=http://cloud-config:8888
+      - EUREKA-URL=http://eureka-server:8761/eureka
+
+  auth-service:
+    image: authservice:0.0.1
+    container_name: auth-service
+    build: ./auth-service
+    networks:
+      - project-network
+    ports:
+      - "8083:8083"
+    depends_on:
+      - cloud-config
+      - eureka-server
+      - db-auth
+    environment:
+      - CLOUD_URI=http://cloud-config:8888
+      - EUREKA-URL=http://eureka-server:8761/eureka
+      - DB_URL=jdbc:postgresql://db-auth:5432/db_auth
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+
+networks:
+  project-network:
