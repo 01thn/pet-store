@@ -3,28 +3,19 @@ package com.cinemastore.privateservice.integration.service;
 import com.cinemastore.privateservice.criteria.BookFilter;
 import com.cinemastore.privateservice.dto.BookRequestDto;
 import com.cinemastore.privateservice.dto.BookResponseDto;
-import com.cinemastore.privateservice.entity.Book;
 import com.cinemastore.privateservice.exception.NoSuchContentException;
 import com.cinemastore.privateservice.integration.IntegrationTestBase;
 import com.cinemastore.privateservice.repository.BookRepository;
 import com.cinemastore.privateservice.service.implementation.BookServiceImpl;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.com.google.common.collect.Iterables;
-import org.testcontainers.shaded.org.hamcrest.MatcherAssert;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BookServiceImplIT extends IntegrationTestBase {
@@ -43,7 +34,7 @@ class BookServiceImplIT extends IntegrationTestBase {
     }
 
     @BeforeEach
-    void setup(){
+    void setup() {
         firstExpected = BookRequestDto.builder()
                 .title("test1")
                 .genres(new HashSet<>())
@@ -64,16 +55,26 @@ class BookServiceImplIT extends IntegrationTestBase {
     }
 
     @Test
-    void save() throws NoSuchContentException {
+    void save() {
+        BookResponseDto firstActual = null;
+        BookResponseDto secondActual = null;
+        try {
+            firstActual = bookService.findById(bookService.save(firstExpected).getId());
+            secondActual = bookService.findById(bookService.save(secondExpected).getId());
+        } catch (NoSuchContentException e) {
+            System.err.println("Problem during saving");
+        }
 
-
-        BookResponseDto firstActual = bookService.findById(bookService.save(firstExpected).getId());
-        BookResponseDto secondActual = bookService.findById(bookService.save(secondExpected).getId());
-
+        assertNotNull(firstActual);
+        assertNotNull(secondActual);
         assertEquals(2, Iterables.size(bookRepository.findAll()));
 
-        bookService.deleteById(firstActual.getId());
-        bookService.deleteById(secondActual.getId());
+        try {
+            bookService.deleteById(firstActual.getId());
+            bookService.deleteById(secondActual.getId());
+        } catch (NoSuchContentException e) {
+            System.err.println("Problem during deleting");
+        }
 
         assertEquals(firstExpected.getTitle(), firstActual.getTitle());
         assertTrue(firstExpected.getGenres().isEmpty());
@@ -92,10 +93,22 @@ class BookServiceImplIT extends IntegrationTestBase {
     }
 
     @Test
-    void findById() throws NoSuchContentException {
+    void findById() {
 
-        BookResponseDto firstActual = bookService.findById(bookService.save(firstExpected).getId());
-        bookService.deleteById(firstActual.getId());
+        BookResponseDto firstActual = null;
+        try {
+            firstActual = bookService.findById(bookService.save(firstExpected).getId());
+        } catch (NoSuchContentException e) {
+            System.err.println("Problem during saving");
+        }
+
+        assertNotNull(firstActual);
+
+        try {
+            bookService.deleteById(firstActual.getId());
+        } catch (NoSuchContentException e) {
+            System.err.println("Problem during deleting");
+        }
 
         assertEquals(firstExpected.getTitle(), firstActual.getTitle());
         assertTrue(firstExpected.getGenres().isEmpty());
@@ -106,21 +119,42 @@ class BookServiceImplIT extends IntegrationTestBase {
     }
 
     @Test
-    void deleteById() throws NoSuchContentException {
-        BookResponseDto firstActual = bookService.findById(bookService.save(firstExpected).getId());
-        bookService.deleteById(firstActual.getId());
+    void deleteById() {
+        BookResponseDto firstActual = null;
+        try {
+            firstActual = bookService.findById(bookService.save(firstExpected).getId());
+        } catch (NoSuchContentException e) {
+            System.err.println("Problem during saving");
+        }
+
+        assertNotNull(firstActual);
+
+        try {
+            bookService.deleteById(firstActual.getId());
+        } catch (NoSuchContentException e) {
+            System.err.println("Problem during deleting");
+        }
         assertEquals(0, Iterables.size(bookRepository.findAll()));
     }
 
     @Test
-    void findBy() throws NoSuchContentException {
-        bookService.save(firstExpected);
+    void findBy() {
+        try {
+            bookService.save(firstExpected);
+        } catch (NoSuchContentException e) {
+            System.err.println("Problem during saving");
+        }
+
         BookResponseDto firstActual = bookService.findBy(BookFilter.builder()
-                .title("test1")
-                .build(), 0, 1)
+                        .title("test1")
+                        .build(), 0, 1)
                 .get(0);
 
-        bookService.deleteById(firstActual.getId());
+        try {
+            bookService.deleteById(firstActual.getId());
+        } catch (NoSuchContentException e) {
+            System.err.println("Problem during deleting");
+        }
 
         assertEquals(firstExpected.getTitle(), firstActual.getTitle());
         assertTrue(firstExpected.getGenres().isEmpty());
@@ -131,12 +165,31 @@ class BookServiceImplIT extends IntegrationTestBase {
     }
 
     @Test
-    void updateById() throws NoSuchContentException {
-        BookResponseDto firstActual = bookService.findById(bookService.save(firstExpected).getId());
-        BookResponseDto secondActual = bookService.updateById(firstActual.getId(), secondExpected);
+    void updateById() {
+        BookResponseDto firstActual = null;
+        try {
+            firstActual = bookService.findById(bookService.save(firstExpected).getId());
+        } catch (NoSuchContentException e) {
+            System.err.println("Problem during saving");
+        }
 
+        assertNotNull(firstActual);
+        BookResponseDto secondActual = null;
+
+        try {
+            secondActual = bookService.updateById(firstActual.getId(), secondExpected);
+        } catch (NoSuchContentException e) {
+            System.err.println("Problem during updating");
+        }
+
+        assertNotNull(secondActual);
         assertEquals(firstActual.getId(), secondActual.getId());
-        bookService.deleteById(secondActual.getId());
+
+        try {
+            bookService.deleteById(secondActual.getId());
+        } catch (NoSuchContentException e) {
+            System.err.println("Problem during deleting");
+        }
 
         assertEquals(secondExpected.getTitle(), secondActual.getTitle());
         assertTrue(secondExpected.getGenres().isEmpty());
