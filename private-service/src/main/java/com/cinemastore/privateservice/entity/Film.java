@@ -44,7 +44,7 @@ public class Film {
     private Integer duration;
 
     @Column(name = "release_date", nullable = false)
-    private LocalDate releaseDate;
+    private Integer releaseDate;
 
     @Column(name = "age_limit")
     private Integer ageLimit;

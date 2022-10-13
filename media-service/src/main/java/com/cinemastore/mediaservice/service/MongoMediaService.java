@@ -5,6 +5,7 @@ import com.cinemastore.mediaservice.dto.ResponseMediaDTO;
 import com.cinemastore.mediaservice.entity.Media;
 import com.cinemastore.mediaservice.exception.ImageConvertingException;
 import com.cinemastore.mediaservice.exception.NoSuchMediaException;
+import com.cinemastore.mediaservice.kafka.ProducerService;
 import com.cinemastore.mediaservice.mapper.MediaMapper;
 import com.cinemastore.mediaservice.repository.MediaRepository;
 import org.slf4j.Logger;
@@ -26,20 +27,24 @@ public class MongoMediaService implements MediaService {
 
     private final MediaMapper mediaMapper;
 
+    private final ProducerService producerService;
+
     private final Logger logger = LoggerFactory.getLogger(MongoMediaService.class);
 
     @Autowired
-    public MongoMediaService(MediaRepository mediaRepository, MediaMapper mediaMapper) {
+    public MongoMediaService(MediaRepository mediaRepository, MediaMapper mediaMapper, ProducerService producerService) {
         this.mediaRepository = mediaRepository;
         this.mediaMapper = mediaMapper;
+        this.producerService = producerService;
     }
 
     public ResponseMediaDTO save(RequestMediaDto requestMediaDto) throws ImageConvertingException {
         try {
-            return mediaMapper.mediaToResponseMediaDto
+            ResponseMediaDTO response = mediaMapper.mediaToResponseMediaDto
                     (mediaRepository.save
-                            (mediaMapper.reqMediaDtoToMedia(requestMediaDto))
-                    );
+                            (mediaMapper.reqMediaDtoToMedia(requestMediaDto)));
+            producerService.produceSavingSuccess(response.getId());
+            return response;
         } catch (IOException e) {
             logger.error("A problem during image {} converting", requestMediaDto.getTitle());
             throw new ImageConvertingException();

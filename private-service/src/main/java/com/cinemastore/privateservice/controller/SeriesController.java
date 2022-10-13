@@ -52,8 +52,8 @@ public class SeriesController {
     }
 
     @GetMapping(SeriesEndpoints.GET_BY_ID)
-    public ResponseEntity<SeriesResponseDto> getById(@PathVariable Long id) throws NoSuchContentException {
-        return new ResponseEntity<>(seriesService.findById(id), HttpStatus.OK);
+    public ResponseEntity<SeriesResponseDto> getById(@PathVariable Long id, @RequestParam String imageId) throws NoSuchContentException {
+        return new ResponseEntity<>(seriesService.findById(id, imageId), HttpStatus.OK);
     }
 
     @DeleteMapping(SeriesEndpoints.DELETE_BY_ID)

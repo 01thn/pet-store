@@ -19,11 +19,13 @@ public class FilmResponseDto {
 
     private Long id;
 
+    private byte[] image;
+
     private String title;
 
     private Integer duration;
 
-    private LocalDate releaseDate;
+    private Integer releaseDate;
 
     private Integer ageLimit;
 

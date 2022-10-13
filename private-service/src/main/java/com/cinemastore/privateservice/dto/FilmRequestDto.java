@@ -1,5 +1,7 @@
 package com.cinemastore.privateservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,16 +17,21 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class FilmRequestDto {
 
+    @JsonIgnore
     private Long id;
 
     @NotBlank
     private String title;
 
     @NotNull
+    @JsonProperty("runningTimeInMinutes")
     private Integer duration;
 
     @NotNull
-    private LocalDate releaseDate;
+    @JsonProperty("year")
+    private Integer releaseDate;
 
     private Integer ageLimit;
+
+    private Double rank;
 }
