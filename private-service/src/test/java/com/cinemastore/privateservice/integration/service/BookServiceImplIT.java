@@ -16,6 +16,7 @@ import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BookServiceImplIT extends IntegrationTestBase {
@@ -197,5 +198,57 @@ class BookServiceImplIT extends IntegrationTestBase {
         assertTrue(secondExpected.getAuthors().isEmpty());
         assertEquals(secondExpected.getPagesAmount(), secondActual.getPagesAmount());
         assertEquals(secondExpected.getReleaseDate(), secondActual.getReleaseDate());
+    }
+
+    @Test
+    void tryToUpdateNotExisting() {
+        BookResponseDto firstActual = null;
+        try {
+            firstActual = bookService.findById(bookService.save(firstExpected).getId());
+        } catch (NoSuchContentException e) {
+            System.err.println("Problem during saving");
+        }
+
+        assertNotNull(firstActual);
+        BookResponseDto secondActual = null;
+
+        try {
+            secondActual = bookService.updateById(firstActual.getId() + 1, secondExpected);
+        } catch (NoSuchContentException e) {
+            System.err.println("Problem during updating");
+        }
+
+        assertNull(secondActual);
+
+        try {
+            bookService.deleteById(firstActual.getId());
+        } catch (NoSuchContentException e) {
+            System.err.println("Problem during deleting");
+        }
+    }
+
+    @Test
+    void tryToDeleteNotExisting() {
+        BookResponseDto firstActual = null;
+        try {
+            firstActual = bookService.findById(bookService.save(firstExpected).getId());
+        } catch (NoSuchContentException e) {
+            System.err.println("Problem during saving");
+        }
+
+        assertNotNull(firstActual);
+
+        try {
+            bookService.deleteById(firstActual.getId() + 1);
+        } catch (NoSuchContentException e) {
+            System.err.println("Problem during deleting");
+        }
+        assertEquals(1, Iterables.size(bookRepository.findAll()));
+
+        try {
+            bookService.deleteById(firstActual.getId());
+        } catch (NoSuchContentException e) {
+            System.err.println("Problem during deleting");
+        }
     }
 }
