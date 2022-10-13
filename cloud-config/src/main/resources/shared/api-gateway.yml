@@ -1,72 +1,78 @@
 server:
   port: 4000
+
 spring:
-  cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-      routes:
-        - id: media-service
-          uri: lb://media-service
-          predicates:
-            - Path=/media/**
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
-        - id: private-service-book
-          uri: lb://private-service
-          predicates:
-            - Path=/book/**
-
-        - id: private-service-film
-          uri: lb://private-service
-          predicates:
-            - Path=/film/**
-
-        - id: private-service-series
-          uri: lb://private-service
-          predicates:
-            - Path=/series/**
-
-        - id: private-service-country
-          uri: lb://private-service
-          predicates:
-            - Path=/country/**
-
-        - id: private-service-genre
-          uri: lb://private-service
-          predicates:
-            - Path=/genre/**
-
-        - id: private-service-person
-          uri: lb://private-service
-          predicates:
-            - Path=/person/**
-
-        - id: private-service-position
-          uri: lb://private-service
-          predicates:
-            - Path=/position/**
-
-        - id: private-service-publisher
-          uri: lb://private-service
-          predicates:
-            - Path=/series/**
-
-        - id: private-service-review
-          uri: lb://private-service
-          predicates:
-            - Path=/review/**
-
-        - id: private-service-studio
-          uri: lb://private-service
-          predicates:
-            - Path=/studio/**
-
-        - id: auth-service
-          uri: lb://auth-service
-          predicates:
-            - Path=/auth/**
+#spring:
+#  cloud:
+#    gateway:
+#      discovery:
+#        locator:
+#          enabled: true
+#          lower-case-service-id: true
+#      routes:
+#        - id: media-service
+#          uri: lb://media-service
+#          predicates:
+#            - Path=/media/**
+#
+#        - id: private-service-book
+#          uri: lb://private-service
+#          predicates:
+#            - Path=/book/**
+#
+#        - id: private-service-film
+#          uri: lb://private-service
+#          predicates:
+#            - Path=/film/**
+#
+#        - id: private-service-series
+#          uri: lb://private-service
+#          predicates:
+#            - Path=/series/**
+#
+#        - id: private-service-country
+#          uri: lb://private-service
+#          predicates:
+#            - Path=/country/**
+#
+#        - id: private-service-genre
+#          uri: lb://private-service
+#          predicates:
+#            - Path=/genre/**
+#
+#        - id: private-service-person
+#          uri: lb://private-service
+#          predicates:
+#            - Path=/person/**
+#
+#        - id: private-service-position
+#          uri: lb://private-service
+#          predicates:
+#            - Path=/position/**
+#
+#        - id: private-service-publisher
+#          uri: lb://private-service
+#          predicates:
+#            - Path=/series/**
+#
+#        - id: private-service-review
+#          uri: lb://private-service
+#          predicates:
+#            - Path=/review/**
+#
+#        - id: private-service-studio
+#          uri: lb://private-service
+#          predicates:
+#            - Path=/studio/**
+#
+#        - id: auth-service
+#          uri: lb://auth-service
+#          predicates:
+#            - Path=/auth/**
 
   application:
     name: api-gateway
@@ -74,4 +80,4 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA-URL}
+      defaultZone: ${EUREKA-URL:http://localhost:8761/eureka}

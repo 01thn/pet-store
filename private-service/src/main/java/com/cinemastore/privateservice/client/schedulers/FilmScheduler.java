@@ -27,7 +27,7 @@ public class FilmScheduler {
         this.filmService = filmService;
     }
 
-    @Scheduled(cron = "0 30 * * * MON-SUN")
+    @Scheduled(cron = "0 30 * * * MON-FRI")
     public void getBestFilmTitlesAndSaveNewFilms() {
         filmClient.getTitles().forEach(filmInfo -> {
             FilmRequestDto film = filmClient.getFilm(filmInfo.getId().substring(7, 16));
