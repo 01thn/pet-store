@@ -42,4 +42,4 @@ flyway:
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA-URL}
+      defaultZone: ${EUREKA-URL:http://localhost:8761/eureka}

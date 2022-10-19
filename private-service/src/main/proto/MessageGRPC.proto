@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package com.cinemastore.mediaservice.grpc;
+
+import "MessageTO.proto";
+
+service StatusMessageService {
+  rpc GetStatus (MessageRequest) returns (MessageResponse) {}
+}
+

@@ -9,7 +9,6 @@ import org.springframework.kafka.annotation.EnableKafka;
 
 @SpringBootApplication
 @EnableFeignClients
-@EnableCircuitBreaker
 @EnableKafka
 @EnableDiscoveryClient
 public class PrivateServiceApplication {
