@@ -14,10 +14,25 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS:localhost:29092}
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
 logging:
   file:
     path: ./private_service/
     name: app.log
+
+feign:
+  hystrix:
+    enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA-URL:http://localhost:8761/eureka}
 
 server:
   port: 8082

@@ -21,6 +21,8 @@ public class SeriesResponseDto {
 
     private String title;
 
+    private byte[] image;
+
     private LocalDate yearStarted;
 
     private LocalDate yearFinished;

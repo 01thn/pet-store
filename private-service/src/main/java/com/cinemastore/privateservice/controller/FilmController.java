@@ -8,6 +8,7 @@ import com.cinemastore.privateservice.dto.FilmResponseDto;
 import com.cinemastore.privateservice.exception.NoSuchContentException;
 import com.cinemastore.privateservice.service.FilmService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,9 +37,9 @@ public class FilmController {
         return new ResponseEntity<>(filmService.save(requestDto), HttpStatus.CREATED);
     }
 
-    @GetMapping(FilmEndpoints.GET_BY_ID)
-    public ResponseEntity<FilmResponseDto> getById(@PathVariable Long id) throws NoSuchContentException {
-        return new ResponseEntity<>(filmService.findById(id), HttpStatus.OK);
+    @GetMapping(value = FilmEndpoints.GET_BY_ID)
+    public ResponseEntity<FilmResponseDto> getById(@PathVariable Long id, @RequestParam String imageId) throws NoSuchContentException {
+        return new ResponseEntity<>(filmService.findById(id, imageId), HttpStatus.OK);
     }
 
     @DeleteMapping(FilmEndpoints.DELETE_BY_ID)

@@ -1,11 +1,15 @@
 server:
   port: 4000
+
 spring:
-  cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
   application:
     name: api-gateway
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA-URL:http://localhost:8761/eureka}

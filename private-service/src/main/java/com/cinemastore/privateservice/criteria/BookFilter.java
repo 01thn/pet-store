@@ -22,6 +22,8 @@ public class BookFilter {
 
     private String title;
 
+    private String imageId;
+
     private Integer pagesAmount;
 
     private LocalDate releaseDate;

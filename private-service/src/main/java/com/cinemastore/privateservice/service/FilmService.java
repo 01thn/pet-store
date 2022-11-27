@@ -10,5 +10,7 @@ import java.util.List;
 
 public interface FilmService extends BaseService<Long, Film, FilmRequestDto, FilmResponseDto> {
 
+    FilmResponseDto findById(Long id, String imageId) throws NoSuchContentException;
+
     List<FilmResponseDto> findBy(FilmFilter filmFilter, Integer page, Integer size);
 }

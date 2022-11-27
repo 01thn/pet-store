@@ -1,5 +1,6 @@
 package com.cinemastore.privateservice.service.implementation;
 
+import com.cinemastore.privateservice.client.MediaServiceClient;
 import com.cinemastore.privateservice.criteria.SeriesFilter;
 import com.cinemastore.privateservice.criteria.SeriesSpecificationBuilder;
 import com.cinemastore.privateservice.dto.SeriesRequestDto;
@@ -30,15 +31,9 @@ public class SeriesServiceImpl implements SeriesService {
 
     private final SeriesMapper seriesMapper;
 
-    private final GenreMapper genreMapper;
-
-    private final CountryMapper countryMapper;
-
-    private final PersonMapper personMapper;
-
-    private final StudioMapper studioMapper;
-
     private final SeriesSpecificationBuilder seriesSpecificationBuilder;
+
+    private final MediaServiceClient client;
 
     private final Logger logger = LoggerFactory.getLogger(SeriesServiceImpl.class);
 
@@ -48,14 +43,12 @@ public class SeriesServiceImpl implements SeriesService {
                              CountryMapper countryMapper,
                              PersonMapper personMapper,
                              StudioMapper studioMapper,
-                             SeriesSpecificationBuilder seriesSpecificationBuilder) {
+                             SeriesSpecificationBuilder seriesSpecificationBuilder,
+                             MediaServiceClient client) {
         this.seriesRepository = seriesRepository;
         this.seriesMapper = seriesMapper;
-        this.genreMapper = genreMapper;
-        this.countryMapper = countryMapper;
-        this.personMapper = personMapper;
-        this.studioMapper = studioMapper;
         this.seriesSpecificationBuilder = seriesSpecificationBuilder;
+        this.client = client;
     }
 
     @Override
@@ -70,6 +63,20 @@ public class SeriesServiceImpl implements SeriesService {
     public SeriesResponseDto findById(Long id) throws NoSuchContentException {
         return seriesRepository.findById(id)
                 .map(seriesMapper::entityToResponseDto)
+                .orElseThrow(() -> {
+                    logger.warn("Series with id {} not found", id);
+                    return new NoSuchContentException();
+                });
+    }
+
+    @Override
+    public SeriesResponseDto findById(Long id, String imageId) throws NoSuchContentException {
+        return seriesRepository.findById(id)
+                .map(it -> {
+                    SeriesResponseDto entity = seriesMapper.entityToResponseDto(it);
+                    entity.setImage(client.findById(imageId));
+                    return entity;
+                })
                 .orElseThrow(() -> {
                     logger.warn("Series with id {} not found", id);
                     return new NoSuchContentException();
@@ -99,7 +106,13 @@ public class SeriesServiceImpl implements SeriesService {
     public List<SeriesResponseDto> findBy(SeriesFilter seriesFilter, Integer page, Integer size) {
         return seriesRepository.findAll(seriesSpecificationBuilder.getSpecification(seriesFilter), PageRequest.of(page, size))
                 .stream()
-                .map(seriesMapper::entityToResponseDto)
+                .map(it -> {
+                    SeriesResponseDto entity = seriesMapper.entityToResponseDto(it);
+                    if (seriesFilter.getImageId() != null) {
+                        entity.setImage(client.findById(seriesFilter.getImageId()));
+                    }
+                    return entity;
+                })
                 .collect(Collectors.toList());
     }
 }
